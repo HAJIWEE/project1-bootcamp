@@ -1,19 +1,217 @@
-.App {
-  text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.Tictactoe {
   display: flex;
+  flex-flow: column wrap;
+  flex-grow: 1;
+  padding: 0%;
+  background: #4e71ec;
+  justify-content: space-between;
+  align-content: center;
+}
+
+.Header {
+  display: flex;
+  min-width: 320px;
+  min-height: 57px;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  gap: 1px;
+
+  left: 0px;
+  top: 0px;
+
+  background: #7490b9;
+  border-radius: 0px 0px 10px 10px;
+}
+
+.Title {
+  /* Tic Tac Toe */
+  font-family: "Aladin";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 36px;
+  line-height: 44px;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  letter-spacing: -0.32px;
+  color: #f8f9fa;
+  flex-grow: 1;
+}
+
+.GameOptions {
+  display: flex;
+  align-content: space-around;
+  list-style-type: none;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  padding: 0%;
+}
+
+.Subheader {
+  width: 150px;
+  flex-grow: 1;
+  text-align: center;
+  font-family: "Aladin";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 24px;
+  line-height: 29px;
+  letter-spacing: -0.32px;
+  color: #ffffff;
+}
+.Toggle {
+  flex-grow: 1;
+  min-width: 41px;
+  min-height: 34px;
+  left: 139px;
+  top: 60px;
+}
+
+.grid {
+  display: flexbox;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  padding: 0% 20%;
+}
+
+.GameGrid {
+  display: flex;
+  flex-shrink: 1;
+  background-color: black;
+  position: relative;
+  min-height: 250px;
+  min-width: 250px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  grid-gap: 1em;
+}
+.grid-view div {
+  display: flex;
+  border: 0.5px solid rgb(0, 0, 0);
+  background-color: #4e71ec;
+  width: auto;
+  height: auto;
+  min-width: 50;
+  min-height: 50;
+}
+
+.grid-view {
+  grid-column: 1 / span all;
+  grid-row: 1 / span all;
+}
+
+.Button1 {
+  /* User start */
+
+  /* Auto layout */
+
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 0px 12px;
+  gap: 10px;
+  width: auto;
+  height: auto;
+  min-width: 125px;
+  min-height: 51px;
+
+  /* Button colour */
+
+  background: #6c757d;
+  border-radius: 4px;
+
+  /* Inside auto layout */
+
+  flex: none;
+  order: 0;
+  flex-grow: 1;
+}
+
+.Button2 {
+  /* Com start */
+
+  /* Auto layout */
+
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 0px 12px;
+  gap: 10px;
+
+  min-width: 125px;
+  min-height: 51px;
+  width: auto;
+  height: auto;
+
+  /* Button colour */
+
+  background: #6c757d;
+  border-radius: 4px;
+
+  /* Inside auto layout */
+
+  flex: none;
+  order: 1;
+  flex-grow: 1;
+}
+
+.frame2 {
+  /* Frame 2 */
+
+  /* Auto layout */
+
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  gap: 30px;
+  list-style-type: none;
+  min-width: 300px;
+  min-height: 71px;
+  width: auto;
+  height: auto;
+
+  /* Inside auto layout */
+
+  flex: none;
+  order: 0;
+  flex-grow: 1;
+}
+
+.PlayerIcon {
+  display: flex;
+  flex-grow: 1;
+  width: fit-content;
+  height: fit-content;
+  min-width: 48px;
+  min-height: 48px;
+  left: 2px;
+  top: 510px;
+  margin: 5% 5%;
+}
+
+.IconInstruction {
+  /* choose your icon: */
+  display: flex;
+  justify-content: center;
+  width: 327px;
+  height: 42px;
+  margin: auto;
+  top: 461px;
+
+  font-family: "Aladin";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 36px;
+  line-height: 44px;
+  letter-spacing: -0.32px;
+
+  color: #ffffff;
 }
