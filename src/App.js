@@ -13,24 +13,53 @@ import {
 } from "react-bootstrap-icons";
 import { Nav, Button } from "react-bootstrap";
 
+function PlayerIcon(playerchoice) {
+  switch (playerchoice) {
+    case "PeaceFill":
+      return <PeaceFill className="GridIcon" />;
+    case "PuzzleFill":
+      return <PuzzleFill className="GridIcon" />;
+    case "LightningChargeFill":
+      return <LightningChargeFill className="GridIcon" />;
+    case "Gem":
+      return <Gem className="GridIcon" />;
+    case "EggFill":
+      return <EggFill className="GridIcon" />;
+    default:
+      return <PeaceFill className="GridIcon" />;
+  }
+}
+
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.initialState = {
       gameStarted: false,
-      gameMode: "player",
-      turn: "unset",
       gameOver: false,
-      availableSquares: [0, 1, 2, 3, 4, 5, 6, 7, 8],
+      winner: "",
+      gameMode: "com",
+      turnOrder: "unset",
+      turn: 1,
+      gridvalue: { four: [4], three: [0, 2, 6, 8], two: [1, 3, 5, 7] },
+      winningArrays: ["012", "345", "678", "036", "147", "258", "048", "246"],
       playerArray: [],
       ComArray: [],
-      playIcon: <PeaceFill className="PlayerIcon" />,
-      CompIcon: <BrightnessHigh className="PlayerIcon" />,
+      GridArray: [
+        "null",
+        "null",
+        "null",
+        "null",
+        "null",
+        "null",
+        "null",
+        "null",
+      ],
+      playIcon: "PeaceFill",
     };
     this.state = { ...this.initialState };
   }
 
-  ChangeGameMode = (event) => {
+  toggleGameMode = (event) => {
     event.preventDefault();
     if (this.state.gameStarted === true) {
       return;
@@ -57,7 +86,8 @@ class App extends React.Component {
     }
     this.setState(() => {
       return {
-        turn: firstturn,
+        gameStarted: true,
+        turnOrder: firstturn,
       };
     });
   };
@@ -91,43 +121,34 @@ class App extends React.Component {
     );
   };
 
+  resetgame = (event) => {
+    this.state = { ...this.initialState };
+  };
+
   TurnTracker = () => {
-    return <div className="IconInstruction">{this.state.turn}'s Turn</div>;
+    return (
+      <div>
+        {this.state.gameOver ? (
+          <div className="IconInstruction">{this.state.winner}</div>
+        ) : (
+          this.renderGameGrid()
+        )}
+        <div className="IconInstruction">
+          <div>{this.state.turnOrder}'s Turn</div>
+          <Button className="Button3" name="Player" onClick={this.resetgame}>
+            Surrender{" "}
+          </Button>
+        </div>
+      </div>
+    );
   };
 
   IsPlayerIcon = (event) => {
-    switch (event.target.class) {
-      case PeaceFill:
-        this.setState(() => {
-          return { playIcon: <PeaceFill className="PlayerIcon" /> };
-        });
-        break;
-      case PuzzleFill:
-        this.setState(() => {
-          return { playIcon: <PuzzleFill className="PlayerIcon" /> };
-        });
-        break;
-      case LightningChargeFill:
-        this.setState(() => {
-          return { playIcon: <LightningChargeFill className="PlayerIcon" /> };
-        });
-        break;
-      case Gem:
-        this.setState(() => {
-          return { playIcon: <Gem className="PlayerIcon" /> };
-        });
-        break;
-      case EggFill:
-        this.setState(() => {
-          return { playIcon: <EggFill className="PlayerIcon" /> };
-        });
-        break;
-      default:
-        this.setState(() => {
-          return { playIcon: <PeaceFill className="PlayerIcon" /> };
-        });
-        break;
-    }
+    var userchoice = event.currentTarget.id;
+    console.log(userchoice);
+    this.setState(() => {
+      return { playIcon: userchoice };
+    });
   };
 
   ChooseIcon = () => {
@@ -136,22 +157,50 @@ class App extends React.Component {
         <p className="IconInstruction">Choose your Icon:</p>
         <ul className="frame2">
           <li>
-            <PeaceFill className="PlayerIcon" onClick={this.IsPlayerIcon} />
+            <button id="PeaceFill" onClick={this.IsPlayerIcon}>
+              <title visibility="hidden">Hi</title>
+              <PeaceFill className="PlayerIcon" />
+            </button>
           </li>
           <li>
-            <PuzzleFill className="PlayerIcon" onClick={this.IsPlayerIcon} />
+            <button>
+              <title visibility="hidden">Hi</title>
+              <PuzzleFill
+                id="PuzzleFill"
+                onClick={this.IsPlayerIcon}
+                className="PlayerIcon"
+              />
+            </button>
           </li>
           <li>
-            <LightningChargeFill
-              className="PlayerIcon"
-              onClick={this.IsPlayerIcon}
-            />
+            <button>
+              <title visibility="hidden">Hi</title>
+              <LightningChargeFill
+                className="PlayerIcon"
+                id="LightningChargeFill"
+                onClick={this.IsPlayerIcon}
+              />
+            </button>
           </li>
           <li>
-            <Gem className="PlayerIcon" onClick={this.IsPlayerIcon} />
+            <button>
+              <title visibility="hidden">Hi</title>
+              <Gem
+                className="PlayerIcon"
+                id="Gem"
+                onClick={this.IsPlayerIcon}
+              />
+            </button>
           </li>
           <li>
-            <EggFill className="PlayerIcon" onClick={this.IsPlayerIcon} />
+            <button>
+              <title visibility="hidden">Hi</title>
+              <EggFill
+                className="PlayerIcon"
+                id="EggFill"
+                onClick={this.IsPlayerIcon}
+              />
+            </button>
           </li>
         </ul>
       </div>
@@ -160,95 +209,192 @@ class App extends React.Component {
 
   PlayTurn = (event) => {
     event.preventDefault();
+    let newGrid = [...this.state.GridArray];
+    const newplayerstate = [
+      ...this.state.playerArray,
+      parseInt(event.target.id),
+    ];
+    let newGridValue = this.state.gridvalue;
+    let checkvalue = this.state.gridvalue.two.indexOf(
+      parseInt(event.target.id)
+    );
+    if (checkvalue === -1) {
+      checkvalue = this.state.gridvalue.three.indexOf(
+        parseInt(event.target.id)
+      );
+      if (checkvalue === -1) {
+        newGridValue.four = [];
+      } else {
+        newGridValue.three = [
+          ...newGridValue.three.splice(0, checkvalue),
+          ...newGridValue.three.splice(checkvalue),
+        ];
+      }
+    }
+    console.log(this.state.winningArrays.includes(newplayerstate.join("")));
+    if (this.state.winningArrays.includes(newplayerstate.join(""))) {
+      this.setState(() => {
+        return { ...this.initialState, winner: "player" };
+      });
+    }
+    const comChoice = this.ComTurn(event.currentTarget.id, newplayerstate);
+    let checkComvalue = this.state.gridvalue.two.indexOf(comChoice);
+    if (checkComvalue === -1) {
+      checkComvalue = this.state.gridvalue.three.indexOf(comChoice);
+      if (checkComvalue === -1) {
+        newGridValue.four = [];
+      } else {
+        newGridValue.three = [
+          ...newGridValue.three.splice(0, checkvalue),
+          ...newGridValue.three.splice(checkvalue),
+        ];
+      }
+    }
+
+    newGrid[comChoice] = "x";
+    newGrid[event.currentTarget.id] = "O";
     this.setState((prevState) => {
       return {
-        playerArray: [...prevState.playerArray, parseInt(event.target.id)],
+        gridvalue: newGridValue,
+        ComArray: [...prevState.ComArray, comChoice],
+        playerArray: newplayerstate,
+        GridArray: newGrid,
+        turn: prevState.turn + 1,
       };
     });
   };
 
-  GridDisplayHandler = () => {
+  ComTurn = (playerchoice, playerArray) => {
+    if (this.state.turn === 1 && playerchoice == 4) {
+      const bestchoice = this.state.gridvalue.three.pop();
+      return bestchoice;
+    } else if (this.state.turn === 1) {
+      return 8 - playerchoice;
+    } else {
+      const playerA = playerArray.sort();
+      if (this.state.winningArrays.includes(playerA.join(""))) {
+        this.setState(() => {
+          return { ...this.initialState };
+        });
+      } else {
+        let checkwin = this.state.winningArrays;
+        for (let i = 0; i < checkwin.length; i += 1) {
+          let winningstring = checkwin[i];
+          console.log(playerA);
+          for (let v = 0; v < playerA.length; v += 1) {
+            winningstring = winningstring.replace(playerA[v], "");
+            console.log("this" + winningstring);
+            if (winningstring.length === 1) {
+              let newArray = [
+                ...checkwin.splice(0, i),
+                ...checkwin.splice(i + 1),
+              ];
+              this.setState(() => {
+                return {
+                  winningArrays: newArray,
+                  playerArray: [],
+                };
+              });
+              return parseInt(winningstring);
+            }
+          }
+        }
+
+        if (this.state.gridvalue.three.length > 0) {
+          let composition = this.state.gridvalue.three;
+          return parseInt(composition.pop());
+        } else if (this.state.gridvalue.four.length > 0) {
+          return 4;
+        } else {
+          let composition = this.state.gridvalue.two;
+          return parseInt(composition.pop());
+        }
+      }
+    }
+  };
+
+  renderGameGrid = () => {
     return (
       <div className="grid">
         <div className="GameGrid">
-          <div class="GameGrid grid-view">
+          <div className="GameGrid grid-view">
             <div>
-              {this.state.playerArray.includes(0) ? (
-                this.state.playIcon
-              ) : this.state.ComArray.includes(0) ? (
-                this.state.CompIcon
+              {this.state.GridArray[0] === "O" ? (
+                PlayerIcon(this.state.playIcon)
+              ) : this.state.GridArray[0] === "x" ? (
+                <BrightnessHigh className="GridIcon" />
               ) : (
                 <div id="0" onClick={this.PlayTurn} />
               )}
             </div>
             <div>
-              {this.state.playerArray.includes(1) ? (
-                this.state.playIcon
-              ) : this.state.ComArray.includes(1) ? (
-                this.state.CompIcon
+              {this.state.GridArray[1] === "O" ? (
+                PlayerIcon(this.state.playIcon)
+              ) : this.state.GridArray[1] === "x" ? (
+                <BrightnessHigh className="GridIcon" />
               ) : (
                 <div id="1" onClick={this.PlayTurn} />
               )}
             </div>
             <div>
-              {this.state.playerArray.includes(2) ? (
-                this.state.playIcon
-              ) : this.state.ComArray.includes(2) ? (
-                this.state.CompIcon
+              {this.state.GridArray[2] === "O" ? (
+                PlayerIcon(this.state.playIcon)
+              ) : this.state.GridArray[2] === "x" ? (
+                <BrightnessHigh className="GridIcon" />
               ) : (
                 <div id="2" onClick={this.PlayTurn} />
               )}
             </div>
             <div>
-              {this.state.playerArray.includes(3) ? (
-                this.state.playIcon
-              ) : this.state.ComArray.includes(3) ? (
-                this.state.CompIcon
+              {this.state.GridArray[3] === "O" ? (
+                PlayerIcon(this.state.playIcon)
+              ) : this.state.GridArray[3] === "x" ? (
+                <BrightnessHigh className="GridIcon" />
               ) : (
                 <div id="3" onClick={this.PlayTurn} />
               )}
             </div>
             <div>
-              {this.state.playerArray.includes(4) ? (
-                this.state.playIcon
-              ) : this.state.ComArray.includes(4) ? (
-                this.state.CompIcon
+              {this.state.GridArray[4] === "O" ? (
+                PlayerIcon(this.state.playIcon)
+              ) : this.state.GridArray[4] === "x" ? (
+                <BrightnessHigh className="GridIcon" />
               ) : (
                 <div id="4" onClick={this.PlayTurn} />
               )}
             </div>
             <div>
-              {this.state.playerArray.includes(5) ? (
-                this.state.playIcon
-              ) : this.state.ComArray.includes(5) ? (
-                this.state.CompIcon
+              {this.state.GridArray[5] === "O" ? (
+                PlayerIcon(this.state.playIcon)
+              ) : this.state.GridArray[5] === "x" ? (
+                <BrightnessHigh className="GridIcon" />
               ) : (
                 <div id="5" onClick={this.PlayTurn} />
               )}
             </div>
             <div>
-              {this.state.playerArray.includes(6) ? (
-                this.state.playIcon
-              ) : this.state.ComArray.includes(6) ? (
-                this.state.CompIcon
+              {this.state.GridArray[6] === "O" ? (
+                PlayerIcon(this.state.playIcon)
+              ) : this.state.GridArray[6] === "x" ? (
+                <BrightnessHigh className="GridIcon" />
               ) : (
                 <div id="6" onClick={this.PlayTurn} />
               )}
             </div>
             <div>
-              {this.state.playerArray.includes(7) ? (
-                this.state.playIcon
-              ) : this.state.ComArray.includes(7) ? (
-                this.state.CompIcon
+              {this.state.GridArray[7] === "O" ? (
+                PlayerIcon(this.state.playIcon)
+              ) : this.state.GridArray[7] === "x" ? (
+                <BrightnessHigh className="GridIcon" />
               ) : (
                 <div id="7" onClick={this.PlayTurn} />
               )}
             </div>
             <div>
-              {this.state.playerArray.includes(8) ? (
-                this.state.playIcon
-              ) : this.state.ComArray.includes(8) ? (
-                this.state.CompIcon
+              {this.state.GridArray[8] === "O" ? (
+                PlayerIcon(this.state.playIcon)
+              ) : this.state.GridArray[8] === "x" ? (
+                <BrightnessHigh className="GridIcon" />
               ) : (
                 <div id="8" onClick={this.PlayTurn} />
               )}
@@ -272,27 +418,24 @@ class App extends React.Component {
               <ToggleOn
                 className="Toggle"
                 name="vPlayer"
-                onClick={this.ChangeGameMode}
+                onClick={this.toggleGameMode}
               />
             ) : (
               <ToggleOff
                 className="Toggle"
                 name="vCom"
-                onClick={this.ChangeGameMode}
+                onClick={this.toggleGameMode}
               />
             )}
           </li>
           <li className="Subheader">vs Player</li>
         </ul>
-        <this.GridDisplayHandler />
 
-        {this.state.turn !== "unset" ? (
-          <this.TurnTracker />
-        ) : (
-          <this.SelectGameOrder />
-        )}
+        {this.state.turnOrder !== "unset"
+          ? this.TurnTracker()
+          : this.SelectGameOrder()}
 
-        {this.state.gameStarted ? <div /> : <this.ChooseIcon />}
+        {this.state.gameStarted ? <div /> : this.ChooseIcon()}
       </div>
     );
   }
